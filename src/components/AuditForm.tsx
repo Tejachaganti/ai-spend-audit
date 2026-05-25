@@ -2,28 +2,24 @@
 
 import { useState } from "react";
 
+import AISummary from "./AISummary";
+import { generateAudit } from "@/lib/auditEngine";
+
 export default function AuditForm() {
   const [tool, setTool] = useState("");
   const [monthlySpend, setMonthlySpend] = useState("");
   const [teamSize, setTeamSize] = useState("");
-  const [result, setResult] = useState("");
 
-  const generateAudit = () => {
-    const spend = Number(monthlySpend);
+  const [audit, setAudit] = useState<any>(null);
 
-    if (spend > 100) {
-      const savings = Math.floor(spend * 0.3);
+  const handleAudit = () => {
+    const result = generateAudit(
+      tool,
+      Number(monthlySpend),
+      Number(teamSize)
+    );
 
-      setResult(
-        `Potential savings detected: approximately $${savings}/month or $${
-          savings * 12
-        }/year by optimizing your AI tooling stack.`
-      );
-    } else {
-      setResult(
-        "Your current AI spend appears reasonably optimized."
-      );
-    }
+    setAudit(result);
   };
 
   return (
@@ -63,15 +59,48 @@ export default function AuditForm() {
         />
 
         <button
-          onClick={generateAudit}
+          onClick={handleAudit}
           className="w-full rounded-lg bg-white py-3 font-semibold text-black"
         >
           Generate Audit
         </button>
 
-        {result && (
-          <div className="mt-6 rounded-xl border border-green-700 bg-green-900/20 p-4">
-            <p>{result}</p>
+        {audit && (
+          <div className="mt-8 space-y-4">
+            <div className="rounded-xl border border-zinc-700 bg-black p-6">
+              <h3 className="text-lg font-semibold">
+                Estimated Monthly Savings
+              </h3>
+
+              <p className="mt-2 text-4xl font-bold text-green-400">
+                ${audit.monthlySavings}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-zinc-700 bg-black p-6">
+              <h3 className="text-lg font-semibold">
+                Estimated Yearly Savings
+              </h3>
+
+              <p className="mt-2 text-4xl font-bold text-green-400">
+                ${audit.yearlySavings}
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-zinc-700 bg-black p-6">
+              <h3 className="text-lg font-semibold">
+                Recommendation
+              </h3>
+
+              <p className="mt-3 text-zinc-300">
+                {audit.recommendation}
+              </p>
+            </div>
+
+            <AISummary
+              monthlySavings={audit.monthlySavings}
+              yearlySavings={audit.yearlySavings}
+            />
           </div>
         )}
       </div>
