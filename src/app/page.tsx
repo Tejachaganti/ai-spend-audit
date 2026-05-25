@@ -1,3 +1,4 @@
+import LeadCapture from "@/components/LeadCapture";
 import AuditForm from "@/components/AuditForm";
 
 export default function Home() {
@@ -14,8 +15,10 @@ export default function Home() {
             Find cheaper plans, better alternatives,
             and hidden monthly savings.
           </p>
-
+  
+          <LeadCapture />
           <AuditForm />
+          
         </div>
       </section>
     </main>
